@@ -20,9 +20,6 @@ var beaconHandler = function (beaconArray) {
         $("#beaconList").append("<li>" + beaconArray[i].id + " " + beaconArray[i].name + " " + pxDisplayString[beaconArray[i].px]+"</li>");
     }
 
-    var isBLEOn = beaconManager.isBTurnOn();
-    if (isBLEOn == true) $("#bleOn").html("<span style='color: green'>YES</span>");
-    else $("#bleOn").html("<span style='color: red'>NO</span>");
 }
 
 beaconManager.onBeaconChanged(beaconHandler);
