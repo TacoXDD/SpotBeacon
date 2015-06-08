@@ -1,11 +1,36 @@
  <h2>Event-baesd Beacon Data Receiver Demo</h2>
 
 <ul>
-    <li>Does this device support Bluetooth 4.0? <span id="bleSupport"></span>
-    </li>
-    <li>Is bluetooth radio turned on? <span id="bleOn"></span>
-    </li>
-    <li>Beacons Found:
+    <li>
         <ul id="beaconList"></ul>
     </li>
 </ul>
+
+var beaconManager = new spotJsBEL();
+
+var beaconHandler = function (beaconArray) {
+
+    $("#beaconList").html("");
+
+    for (var i = 0; i < beaconArray.length; i++) {
+        $("#beaconList").append("<li>" + beaconArray[i].id + " " + beaconArray[i].name + " " + pxDisplayString[beaconArray[i].px]+"</li>");
+    }
+
+    var isBLEOn = beaconManager.isBTurnOn();
+    if (isBLEOn == true) $("#bleOn").html("<span style='color: green'>YES</span>");
+    else $("#bleOn").html("<span style='color: red'>NO</span>");
+}
+
+beaconManager.onBeaconChanged(beaconHandler);
+
+var pxDisplayString = ["Unknown", "Immediate", "Near", "Far"];
+
+$(window).load(function () {
+    beaconManager.init();
+
+    var isBLEDevice = beaconManager.isBLESupport();
+
+    if (isBLEDevice == true) $("#bleSupport").html("<span style='color: green'>YES</span>");
+    else $("#bleSupport").html("<span style='color: red'>NO</span>");
+
+})
