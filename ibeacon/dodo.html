@@ -293,7 +293,7 @@ var beaconHandler = function (beaconArray) {
     $("#beaconList").html("");
 
     for (var i = 0; i < beaconArray.length; i++) {
-        $("#beaconList").append("<li>" + beaconArray[i].id + " " + beaconArray[i].name + " " + pxDisplayString[beaconArray[i].px]+"</li>");
+        $("#beaconList").append("<li>" + beaconArray[i].id + " " + beaconArray[i].name + " @@ " + beaconArray[i].px + " !! " + pxDisplayString[beaconArray[i].px]+"</li>");
         $("#myPic").attr("src", myPicArray[beaconArray[i].px])
 
     }
