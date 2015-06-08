@@ -14,7 +14,7 @@ var beaconHandler = function (beaconArray) {
     $("#beaconList").html("");
 
     for (var i = 0; i < beaconArray.length; i++) {
-        $("#beaconList").append("<li>" + beaconArray[i].id + " " + beaconArray[i].name + " " + pxDisplayString[beaconArray[i].px]+"</li>");
+        $("#beaconList").append(beaconArray[i].id + " " + beaconArray[i].name + " " + pxDisplayString[beaconArray[i].px]);
     }
 
 }
