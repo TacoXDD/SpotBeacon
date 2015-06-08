@@ -93,7 +93,23 @@ if (window !== window.top && location.hash !== '#dontkillanim') {
 
   };
 
+  // Next we need to pause/stop JS Animations
+
   var pauseJSAnimations = function() {
+
+    // We need to override setInterval, setTimeout
+    // in such a way, that all the calls register their
+    // ids in an array and we can clear all the ids
+    // after a given time.
+    //
+    // Don't trust me ? Lern2Google:
+    // http://stackoverflow.com/a/11374151/1437328
+    // http://stackoverflow.com/a/8524313/1437328
+    // http://stackoverflow.com/a/8769620/1437328
+    //
+    // 3rd one is pretty much the code you need!
+    //
+    // Thank you for building your trust in me now :D
 
     window.setInterval = (function(oldSetInterval) {
       var registered = [];
@@ -252,6 +268,20 @@ else {
 </head>
 <body onload="__pauseAnimations();">
 
+
+ <h2>Event-baesd Beacon Data Receiver Demo</h2>
+
+<ul>
+    <li>Does this device support Bluetooth 4.0? <span id="bleSupport"></span>
+    </li>
+    <li>Is bluetooth radio turned on? <span id="bleOn"></span>
+    </li>
+    <li>Beacons Found:
+        <ul id="beaconList"></ul>
+        <img id="myPic" src="">
+    </li>
+</ul>
+
 <script class="cssdeck" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
 
 <script src="http://www.spot.ms/spot_jsbelib.js"></script>
@@ -263,6 +293,7 @@ var beaconHandler = function (beaconArray) {
     $("#beaconList").html("");
 
     for (var i = 0; i < beaconArray.length; i++) {
+        $("#beaconList").append("<li>" + beaconArray[i].id + " " + beaconArray[i].name + " @@ " + beaconArray[i].px + " !! " + pxDisplayString[beaconArray[i].px]+"</li>");
         $("#myPic").attr("src", myPicArray[beaconArray[i].px])
 
     }
@@ -276,8 +307,8 @@ var beaconHandler = function (beaconArray) {
 
 beaconManager.onBeaconChanged(beaconHandler);
 
-var pxDisplayString = [" ", "<50CM", "<2M", "<30M"];
-var myPicArray = ["http://s2.gigacircle.com/media/s2_53f2e7917e2d0.jpg", "http://www.styletc.com/wp-content/uploads/2014/10/eca86ba054ac1235262618.jpg", "http://www.zgjm.org/uploads/allimg/140118/1334551250-0.jpg", "http://s2.gigacircle.com/media/s2_53f2e7917e2d0.jpg"]
+var pxDisplayString = ["U", "<50CM", "<2M", "<30M"];
+var myPicArray = ["http://s2.gigacircle.com/media/s2_53f2e7917e2d0.jpg", "http://s2.gigacircle.com/media/s2_53f2e7917e2d0.jpg", "http://s2.gigacircle.com/media/s2_53f2e7917e2d0.jpg", "http://s2.gigacircle.com/media/s2_53f2e7917e2d0.jpg"]
 
 $(window).load(function () {
     beaconManager.init();
