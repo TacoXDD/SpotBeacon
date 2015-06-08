@@ -93,23 +93,7 @@ if (window !== window.top && location.hash !== '#dontkillanim') {
 
   };
 
-  // Next we need to pause/stop JS Animations
-
   var pauseJSAnimations = function() {
-
-    // We need to override setInterval, setTimeout
-    // in such a way, that all the calls register their
-    // ids in an array and we can clear all the ids
-    // after a given time.
-    //
-    // Don't trust me ? Lern2Google:
-    // http://stackoverflow.com/a/11374151/1437328
-    // http://stackoverflow.com/a/8524313/1437328
-    // http://stackoverflow.com/a/8769620/1437328
-    //
-    // 3rd one is pretty much the code you need!
-    //
-    // Thank you for building your trust in me now :D
 
     window.setInterval = (function(oldSetInterval) {
       var registered = [];
@@ -292,6 +276,7 @@ var beaconHandler = function (beaconArray) {
 
 beaconManager.onBeaconChanged(beaconHandler);
 
+var pxDisplayString = [" ", "<50CM", "<2M", "<30M"];
 var myPicArray = ["http://s2.gigacircle.com/media/s2_53f2e7917e2d0.jpg", "http://www.styletc.com/wp-content/uploads/2014/10/eca86ba054ac1235262618.jpg", "http://www.zgjm.org/uploads/allimg/140118/1334551250-0.jpg", "http://s2.gigacircle.com/media/s2_53f2e7917e2d0.jpg"]
 
 $(window).load(function () {
