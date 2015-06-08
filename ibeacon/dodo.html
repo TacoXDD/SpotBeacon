@@ -15,6 +15,7 @@ var beaconHandler = function (beaconArray) {
 
     for (var i = 0; i < beaconArray.length; i++) {
         $("#beaconList").append( pxDisplayString[beaconArray[i].px] );
+        $("#myPic").attr("src", myPicArray[beaconArray[i].px])
     }
 
 }
@@ -22,6 +23,11 @@ var beaconHandler = function (beaconArray) {
 beaconManager.onBeaconChanged(beaconHandler);
 
 var pxDisplayString = ["Unknown", "http://www.zgjm.org/uploads/allimg/140118/1334551250-0.jpg", "Near", "Far"];
+
+var myPicArray = ["http://ext.pimg.tw/sunshine176/1214116324.jpg", 
+				  "http://www.styletc.com/wp-content/uploads/2014/10/eca86ba054ac1235262618.jpg", 
+				  "http://www.zgjm.org/uploads/allimg/140118/1334551250-0.jpg", 
+				  "http://s2.gigacircle.com/media/s2_53f2e7917e2d0.jpg"]
 
 $(window).load(function () {
     beaconManager.init();
