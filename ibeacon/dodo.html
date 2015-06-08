@@ -1,93 +1,122 @@
-
-<!--
-  // ********************************************************************
-  //
-  // HTML for KKLabs' taxibeacon Project
-  // Author: Geoffrey Wang
-  //
-  //
-  // ********************************************************************
--->
-
-<!DOCTYPE html>
+<!doctype html>
+<html>
 <head>
-  <!-- Standard Meta -->
-  <meta charset="utf-8" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
+<title>KP Demo01</title>
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="stylesheet" type="text/css" href="css/smg.layout.css">
 
-  <!-- Mobile App Meta-->
-  <meta name="apple-mobile-web-app-capable" content="yes"/>
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-
-  <!-- Site Properities -->
-  <title>KP Game (SPOT Beacon Sample)</title>
+<script src="jquery-2.1.0.min.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<!-- Latest compiled and minified JavaScript -->
+<script type="text/javascript" src="jquery.spritely.js"></script>
 
   <!-- Style Sheet: semantic-UI and local -->
   <link rel="stylesheet" type="text/css" href="packaged/css/semantic.min.css">
-  <link rel="stylesheet" type="text/css" href="kpgame.css">
 
-  <!-- Javascript Lib: jQuery and plugins -->
-  <script type="text/javascript" src="jquery-2.1.0.min.js"></script>
-  <script src="jqfloat.min.js"></script>
-  
   <!-- Javascript Lib: semantic-UI -->
   <script src="packaged/javascript/semantic.min.js"></script>
 
-  <!-- Javascript Lib: kklabs -->
-  <script src="viaduct_essential_lib.js"></script>
-  <script src="spot_jsbelib.js"></script>
+<script type="text/javascript">
+var title = new Array();
+$.get("http://api.kptaipei.tw/v1/category/40",function(res){
+	for(var i=0; i<res.data.length; i++){
+		title.push(res.data[i].title);
+	}
+});
+$(document).ready(function(){
+	$('#clouds').pan({fps: 30, speed: 0.7, dir: 'left', depth: 10});
+	$('#hill2').pan({fps: 30, speed: 2, dir: 'left', depth: 30});
+	$('#hill1').pan({fps: 30, speed: 3, dir: 'left', depth: 70});
+	$('#hill1, #hill2, #clouds').spRelSpeed(8);
+	$('#man').sprite({fps: 9, no_of_frames: 2});
 
-  <script src="kpgame.js"></script>
+	var clickLock = false;
+	var i = 0;
+	var ct = setInterval(function(){
+		var y1 = $("#man").css("bottom");
+		console.log($(".candy").index());
+		// for(var i=0; i<$(".candy").index(); i++){
+
+		// }
+	},1000);
+
+	$("body").click(function(){
+		if (!clickLock){
+			clickLock = true;
+			$("#man").animate({"bottom":"150px"},500,function(){
+				$("#man").animate({"bottom":"20px"},500,function(){
+					clickLock = false;
+				});
+			})
+		}
+	});
+
+	document.body.addEventListener('touchstart', function(e){
+		if (!clickLock){
+			clickLock = true;
+			$("#man").animate({"bottom":"150px"},500,function(){
+				$("#man").animate({"bottom":"20px"},500,function(){
+					clickLock = false;
+				});
+			})	
+		}
+	}, false);
+
+	var t = setInterval(function(){
+		var topPos = Math.random()*250+50;
+		var num = Math.floor(Math.random()*title.length);
+		var word = title[num].replace("【柯P新政】","");
+		$("#stage").append("<div class='candy c"+i+"'>"+word+"</div>");
+		$(".c"+i).css({"right":"-20%","top":topPos+"px"}).animate({"right":"100%"},6000,"linear",function(){
+			$(".c"+i).remove();
+		});
+		i++;
+	},2000)
+
+});
+</script>
+
+<style>
+	#introArea
+	{
+		width: 80vw;
+		text-align: center;
+		margin: 358px auto 0px auto;
+		padding-top: 50px; 
+		line-height: 50px;
+	}
+
+</style>
 
 </head>
 <body>
+<div id="stage" class="stage">
+	<div id="bg" class="stage"></div>
+	<div id="clouds" class="stage"></div>
+	<div id="hill2" class="stage"></div>
+	<div id="hill1" class="stage"></div>       
 
+	<div id="man"></div>
 
-<!-- left content area -->
-<div id="mainArea" >
+</div>
 
-    <div class="contentArea" id="mainTitle"></div>
+<div id="introArea">
 
-    <div class="contentArea msgbox" id="click2begin" style="display: none;"></div>
-    <div class="contentArea msgbox" id="kpTalk" style="display: none;">
+	<a class="ui teal button" href="index_beacon.html">進入遊戲 (需配合BLE裝置)</a> <a class="ui teal button" href="https://github.com/kklabs/spot_interactive/tree/master/kpGame"><i class="github icon"></i>檢視原始碼</a> 
 
-      <div id="contentInner">
-      </div>
-
+	<div class="ui segment" style="text-align: left; line-height: 1.5em">
+    <p>政府資料開放(open data)與公民參與，是相當重要值得關注的議題。這個網站是一個使用 bluetooth 4.0 (iBeacon) 技術的行動 HTML5 遊戲，是我們 2014/9/6 參加 <a href="http://unlimited.kptaipei.tw/">柯文哲野生官網 unlimited 工作坊活動</a>的作品。這個互動設計的概念，是希望透過體感遊戲，可以增加使用者對於候選人政見認識的樂趣，也展示 Open Data API 與 各種技術快速結合的可能性。
+    </p>
+    <p>當天從發想到製作，只有短短的幾個小時，所有的程式與內容製作，均在工作坊現場完成。所以目前這個版本還相當陽春，我們後續會繼續發展這個作品。</p>
+    <p>程式與開發 By <a href="mailto:dtwang@kkbooks.tw">Geoffrey</a> / Sybil / <a href="https://github.com/gg90052">Teddy</a>  </p>
     </div>
 
-    <div class="contentArea btnArea" id="btnStart" style="display: none;" onclick="gameStart();"></div>
-    <div class="contentArea btnArea" id="btnReStart" style="display: none;" onclick="gameStart();"></div>
+ <a class="ui blue button" href="https://www.ptt.cc/bbs/PublicIssue/M.1410008247.A.BF6.html">開放API工作營簡介(文末有影片)</a>
 
-    <!--<canvas class="contentArea" id="effect" width="220" height="180" style="display: none;"></canvas>-->
 
 </div>
-
-<div id="initArea" >
-  <div id="progress">
-    <i class="huge loading icon"></i>
-  </div>
-</div>
-
-<!--
-<div id="plzRotateArea" >
-  <div id="progress">
-    <i class="huge repeat icon"></i>
-  </div>
-</div>
--->
-
-<div id="loadingArea" >
-<i class="huge loading icon"></i>
-</div>
-
-
-    <audio preload="none" id="audioChannel01" style="display: none"> 
-    </audio>
-
 
 </body>
-
 </html>
