@@ -14,14 +14,14 @@ var beaconHandler = function (beaconArray) {
     $("#beaconList").html("");
 
     for (var i = 0; i < beaconArray.length; i++) {
-        $("#beaconList").append(beaconArray[i].id + " " + beaconArray[i].name + " " + pxDisplayString[beaconArray[i].px]);
+        $("#beaconList").append( pxDisplayString[beaconArray[i].px] );
     }
 
 }
 
 beaconManager.onBeaconChanged(beaconHandler);
 
-var pxDisplayString = ["Unknown", "Immediate", "Near", "Far"];
+var pxDisplayString = ["Unknown", "http://www.zgjm.org/uploads/allimg/140118/1334551250-0.jpg", "Near", "Far"];
 
 $(window).load(function () {
     beaconManager.init();
