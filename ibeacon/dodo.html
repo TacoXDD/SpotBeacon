@@ -1,324 +1,93 @@
 
-<!doctype html>
-<html>
+<!--
+  // ********************************************************************
+  //
+  // HTML for KKLabs' taxibeacon Project
+  // Author: Geoffrey Wang
+  //
+  //
+  // ********************************************************************
+-->
 
+<!DOCTYPE html>
 <head>
-	<meta charset="utf-8">
-	<title></title>
+  <!-- Standard Meta -->
+  <meta charset="utf-8" />
 
-  <meta name="robots" content="noindex, nofollow">
-  <link rel="canonical" href="http://cssdeck.com/labs/swzwceuf">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-          <link rel="stylesheet" href="/assets/css/normalize.min.css">
-      
-	<style>
-	</style>
+  <!-- Mobile App Meta-->
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-          <script src="/assets/js/prefixfree.min.js"></script>
-      
-  <script>
-    // We really want to disable
-    window.open    = function() {};
-    window.alert   = function() {};
-    window.print   = function() {};
-    window.prompt  = function() {};
-    window.confirm = function() {};
-  </script>
+  <!-- Site Properities -->
+  <title>KP Game (SPOT Beacon Sample)</title>
 
-  <script>
-  // #killanim is only being used in lab full view, maybe we could
-  // use it everywhere :D
-//if (window !== window.top && window.top.__stop_animations !== false) {
-if (window !== window.top && location.hash !== '#dontkillanim') {
-  window.is_webkit = /(webkit)[ \/]([\w.]+)/.exec(window.navigator.userAgent.toLowerCase())
+  <!-- Style Sheet: semantic-UI and local -->
+  <link rel="stylesheet" type="text/css" href="packaged/css/semantic.min.css">
+  <link rel="stylesheet" type="text/css" href="kpgame.css">
 
-  window.max_timer = window.is_webkit ? 2000 : 20
+  <!-- Javascript Lib: jQuery and plugins -->
+  <script type="text/javascript" src="jquery-2.1.0.min.js"></script>
+  <script src="jqfloat.min.js"></script>
+  
+  <!-- Javascript Lib: semantic-UI -->
+  <script src="packaged/javascript/semantic.min.js"></script>
 
-  // Let's try to prevent user's from OOM'ing esp. in FX and Op.
-  // First, we need to stop CSS Animations, after say 5s ?
-  //
-  // Ok, so i tried 5s, but there are some problems. Firstly, Firefox
-  // and opera behave same. little improvement only. So making it 3s now.
-  //
-  // Tutorial: https://developer.mozilla.org/en/CSS/CSS_animations
-  // Help: http://www.sitepoint.com/css3-animation-javascript-event-handlers
+  <!-- Javascript Lib: kklabs -->
+  <script src="viaduct_essential_lib.js"></script>
+  <script src="spot_jsbelib.js"></script>
 
-  var pauseCSSAnimations = function() {
+  <script src="kpgame.js"></script>
 
-    var stopCSSAnimations = function() {
-      // Get the Body Element
-      var body = document.getElementsByTagName('body')[0];
-
-      // We'll setup animationstart and animationiteration
-      // events only. No need for animationend, cuz the
-      // animation might be 30minutes long. animationiteration
-      // cuz the animation might be .000002ms long.
-
-      // addEventListener is perfectly supported in IE9.
-      // and we don't care about IE8 and below. Let those
-      // browsers die in a fire!
-
-      body.addEventListener('webkitAnimationStart', stopAnimation, false);
-      body.addEventListener('webkitAnimationIteration', stopAnimation, false);
-      body.addEventListener('animationstart', stopAnimation, false);
-      body.addEventListener('animationiteration', stopAnimation, false);
-    };
-
-    // e is the event object bro ;)
-    var stopAnimation = function(e) {
-      // e.srcElement? lulz...
-      var target_el = e.target;
-      var e_type = e.type.toLowerCase();
-      
-      if (e_type.indexOf('animationstart') !== -1 || e_type.indexOf('animationiteration') !== -1) {
-        // LOL, we need to stop the animation now!
-        // setInterval? lulz...
-
-        setTimeout(false, function() {
-
-          if (target_el.style.webkitAnimationPlayState !== 'paused')
-            target_el.style.webkitAnimationPlayState = 'paused';
-
-          if (target_el.style.MozAnimationPlayState !== 'paused')
-            target_el.style.MozAnimationPlayState = 'paused';
-
-          if (target_el.style.animationPlayState !== 'paused')
-            target_el.style.animationPlayState = 'paused';
-
-        }, window.max_timer);
-      }
-    }
-
-    stopCSSAnimations();
-
-  };
-
-  // Next we need to pause/stop JS Animations
-
-  var pauseJSAnimations = function() {
-
-    // We need to override setInterval, setTimeout
-    // in such a way, that all the calls register their
-    // ids in an array and we can clear all the ids
-    // after a given time.
-    //
-    // Don't trust me ? Lern2Google:
-    // http://stackoverflow.com/a/11374151/1437328
-    // http://stackoverflow.com/a/8524313/1437328
-    // http://stackoverflow.com/a/8769620/1437328
-    //
-    // 3rd one is pretty much the code you need!
-    //
-    // Thank you for building your trust in me now :D
-
-    window.setInterval = (function(oldSetInterval) {
-      var registered = [];
-
-      var f = function() {
-        var id;
-        // .. this!
-        var $this = this;
-        // setInterval accepts n no. of args
-        var args = arguments;
-        // What if someone used the awesome Function.bind() ?
-        // I am sure we want the awesome apply() then ;)
-
-        // this is my awesome brain usage. if first val is nonsense,
-        // then don't register, heh.
-        if (typeof args[0] !== 'function' && args[0] === false) {
-          args = Array.prototype.slice.call(arguments);
-          args = args.slice(1);
-
-          id = oldSetInterval.apply($this, args)
-        }
-        else {
-          id = oldSetInterval.apply($this, args);
-          registered.push(id);
-        }
-
-        //console.log(registered);
-        // Need to return the Interval ID
-        return id;
-      };
-
-      f.clearAll = function() {
-        var r;
-        while (r = registered.pop()) {
-          clearInterval(r);
-        }
-      };
-
-      return f;
-    })(window.setInterval);
-
-    window.setTimeout = (function(oldSetTimeout) {
-      var registered = [];
-
-      var f = function() {
-        var id;
-        // .. this!
-        var $this = this;
-        // setInterval accepts n no. of args
-        var args = arguments;
-        // What if someone used the awesome Function.bind?
-        // I am sure we want the awesome apply then ;)
-
-        // this is my awesome brain usage. if first val is nonsense,
-        // then don't register, heh.
-        if (typeof args[0] !== 'function' && args[0] === false) {
-          args = Array.prototype.slice.call(arguments);
-          args = args.slice(1);
-
-          id = oldSetTimeout.apply($this, args)
-        }
-        else {
-          //console.log('lolzzzzz');
-          id = oldSetTimeout.apply($this, args);
-          registered.push(id);
-        }
-
-        //console.log(registered);
-        // Need to return the Timeout ID
-        return id;
-      };
-
-      f.clearAll = function() {
-        var r;
-        while (r = registered.pop()) {
-          clearTimeout(r);
-        }
-      };
-
-      return f;
-    })(window.setTimeout);
-
-    setTimeout(false, function() {
-      setTimeout.clearAll();
-      setInterval.clearAll();
-    }, window.max_timer);
-
-
-    // Time to Cancel rAF's Bro :)
-    // You know things are harder when people are actually
-    // using shims for rAF :/ So we need to test for vendors!
-
-    window.__requestAnimFrame = window.requestAnimationFrame || undefined;
-    window.__cancelAnimFrame = window.cancelAnimationFrame || undefined;
-    window.__vendors = ['webkit', 'moz', 'ms', 'o'];
-    window.__registered_rafs = [];
-
-    // I can't think of a good way to cancel rAF's
-    // So maybe lets use something similar to our other canceller's
-
-    window.__requestFrame = function(cb) {
-      if (!window.__requestAnimFrame) return;
-
-      var req_id = window.__requestAnimFrame(cb);
-      __registered_rafs.push(req_id);
-
-      return req_id;
-    };
-
-    // Determine the proper VendorPrefixedFunctionName
-    if (!window.__requestAnimFrame) {
-      for (var x = 0; x < window.__vendors.length; x++) {
-          if (!window.__requestAnimFrame) {
-            window.__requestAnimFrame = window[window.__vendors[x]+'RequestAnimationFrame'];
-            window[window.__vendors[x]+'RequestAnimationFrame'] = __requestFrame;
-          }
-
-          if(!window.__cancelAnimFrame) {
-            // I came across webkitCancelAnimationFrame and webkitCancelRequestAnimationFrame
-            // No idea about the difference, so maybe lets ||'fy it
-
-            window.__cancelAnimFrame = window[window.__vendors[x]+'CancelAnimationFrame'] ||
-                                        window[window.__vendors[x]+'CancelRequestAnimationFrame'];
-          }
-      }
-    }
-
-    // We have our proper vendor prefixed raf objects now :)
-    // So let's go mad!!!
-    // Let's Cancel our rAF's
-    setTimeout(false, function() {
-      if (!window.__requestAnimFrame) return;
-      
-      var r;
-      while (r = window.__registered_rafs.pop()) {
-        window.__cancelAnimFrame(r);
-      }
-    }, window.max_timer);
-
-  };
-
-  // Had to place outside pauseAnimations to work properly
-  // else it was getting called afterwards code setTimeout/Interval executed
-  if (window !== window.top)
-    pauseJSAnimations();
-
-  var __pauseAnimations = function() {
-    if (window !== window.top)
-      pauseCSSAnimations();
-  };
-}
-else {
-  __pauseAnimations = function() {};
-}
-  </script>
 </head>
-<body onload="__pauseAnimations();">
+<body>
 
 
- <h2>Event-baesd Beacon Data Receiver Demo</h2>
+<!-- left content area -->
+<div id="mainArea" >
 
-<ul>
-    <li>Does this device support Bluetooth 4.0? <span id="bleSupport"></span>
-    </li>
-    <li>Is bluetooth radio turned on? <span id="bleOn"></span>
-    </li>
-    <li>Beacons Found:
-        <ul id="beaconList"></ul>
-        <img id="myPic" src="">
-    </li>
-</ul>
+    <div class="contentArea" id="mainTitle"></div>
 
-<script class="cssdeck" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+    <div class="contentArea msgbox" id="click2begin" style="display: none;"></div>
+    <div class="contentArea msgbox" id="kpTalk" style="display: none;">
 
-<script src="http://www.spot.ms/spot_jsbelib.js"></script>
-<script>
-var beaconManager = new spotJsBEL();
+      <div id="contentInner">
+      </div>
 
-var beaconHandler = function (beaconArray) {
+    </div>
 
-    $("#beaconList").html("");
+    <div class="contentArea btnArea" id="btnStart" style="display: none;" onclick="gameStart();"></div>
+    <div class="contentArea btnArea" id="btnReStart" style="display: none;" onclick="gameStart();"></div>
 
-    for (var i = 0; i < beaconArray.length; i++) {
-        $("#beaconList").append("<li>" + beaconArray[i].id + " " + beaconArray[i].name + " @@ " + beaconArray[i].px + " !! " + pxDisplayString[beaconArray[i].px]+"</li>");
-        $("#myPic").attr("src", myPicArray[beaconArray[i].px])
+    <!--<canvas class="contentArea" id="effect" width="220" height="180" style="display: none;"></canvas>-->
 
-    }
+</div>
+
+<div id="initArea" >
+  <div id="progress">
+    <i class="huge loading icon"></i>
+  </div>
+</div>
+
+<!--
+<div id="plzRotateArea" >
+  <div id="progress">
+    <i class="huge repeat icon"></i>
+  </div>
+</div>
+-->
+
+<div id="loadingArea" >
+<i class="huge loading icon"></i>
+</div>
 
 
+    <audio preload="none" id="audioChannel01" style="display: none"> 
+    </audio>
 
-    var isBLEOn = beaconManager.isBTurnOn();
-    if (isBLEOn == true) $("#bleOn").html("<span style='color: green'>YES</span>");
-    else $("#bleOn").html("<span style='color: red'>NO</span>");
-}
-
-beaconManager.onBeaconChanged(beaconHandler);
-
-var pxDisplayString = ["U", "<50CM", "<2M", "<30M"];
-var myPicArray = ["http://s2.gigacircle.com/media/s2_53f2e7917e2d0.jpg", "http://s2.gigacircle.com/media/s2_53f2e7917e2d0.jpg", "http://s2.gigacircle.com/media/s2_53f2e7917e2d0.jpg", "http://s2.gigacircle.com/media/s2_53f2e7917e2d0.jpg"]
-
-$(window).load(function () {
-    beaconManager.init();
-
-    var isBLEDevice = beaconManager.isBLESupport();
-
-    if (isBLEDevice == true) $("#bleSupport").html("<span style='color: green'>YES</span>");
-    else $("#bleSupport").html("<span style='color: red'>NO</span>");
-
-})</script>
 
 </body>
+
 </html>
